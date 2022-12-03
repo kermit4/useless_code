@@ -1,14 +1,11 @@
 #!/bin/bash
-#input="<html>hh<body>bbb<b>hi</b>BB</body>HH</html>" 
-input="<html>hh<body>
+input="<html>hh<body>bbb<b>hi</b>BB</body>HH</html>" 
+[[ $TMPDIR ]] || TMPDIR=/tmp/
+tmp=/$TMPDIR/html_indenter.input
+yes "$input" | head -100000 > $tmp
 
-
-bbb<b>
-hi</b>
-    BB</body>                   HH</html>" 
-for src in ${0%bash}*;do
-    lang=${src##*.}
-    [[ $lang == bash ]] && continue
-    echo ======== with $lang
-    $src <<<$input
+gcc -O3 html_indenter.c -o html_indenter
+for lang in html_indenter{.awk,.sed,,O2,O3};do 
+    echo ======== $lang
+    time ./$lang  < $tmp > /dev/null
 done
